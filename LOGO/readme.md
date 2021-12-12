@@ -26,6 +26,6 @@ Download the source files and simply run your http server in the same folder.
 | `home`   |                                  | Go back to the start position (and rotation)                          | :green_heart:  |
 | `label`  | **"** _text_ **"**               | Write the text between double quote `"..."` at the turtle position                          | :green_heart: |
 | `setxy`  | **xpos** **ypos**                | Go to the position defined by `xpos` for X axis and `ypos` for Y axis (keep rotation)*  | :green_heart: |
-| `repeat` | **nb** **[** _commands..._ **]** | Execute `nb` times the commands between brackets `[ ... ]`            | :broken_heart: |
+| `repeat` | **nb** **[** _commands..._ **]** | Execute `nb` times the commands between brackets `[ ... ]`            | :green_heart: |
 
 \* The (0, 0) point is the home position (it should be the center of the screen). 

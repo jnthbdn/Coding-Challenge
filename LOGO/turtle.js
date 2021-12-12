@@ -7,6 +7,7 @@ class Turtle {
         this.startAngle = angle;
 
         this.rot = 0;
+        this.strokeWeight = 1;
 
         translate(x, y);
         rotate(angle);
@@ -15,10 +16,11 @@ class Turtle {
     moveForward(distance){
         if( this.isPenDown ){
             stroke(255);
+            strokeWeight(this.strokeWeight);
             line(0, 0, distance, 0);
         }
 
-        translate(distance, 0);
+        translate(distance + this.strokeWeight, 0);
     }
 
     moveBackward(distance){

@@ -2,7 +2,10 @@ class TokenReader {
 
     constructor(text){
         this.index = 0;
-        this.text = text;
+        this.text = (text + " ").replaceAll("[", "[ ")          // Be sure to "tokenize" [
+                                .replaceAll("]", " ]")          // Be sure to "tokenize" ]
+                                .replaceAll(/\s{2,}/g, " ")     // Remove multiple whitespace
+                                .replaceAll(/\s/g, " ");        // Replace all whitespace with a space
     }
 
     nextToken(separator = " "){
@@ -18,23 +21,21 @@ class TokenReader {
         return token;
     }
 
-    nextTokenBetween(container){
+    nextTokenBetween(open, close = open){
 
-        let a = this.nextToken(container);
+        let a = this.nextToken(open);
 
         if( a instanceof TokenReaderError ){ return new TokenReaderError(TokenReaderError.CONTAINER_NOT_FOUND); }
 
-        console.log(a);
-
-        if( !a.trim().startsWith(container) ){
-            return new TokenReaderError(TokenReaderError.CONTAINER_NOT_NEXT, a.substring(0, a.indexOf(container)));
+        if( !a.trim().startsWith(open) ){
+            return new TokenReaderError(TokenReaderError.CONTAINER_NOT_NEXT, a.substring(0, a.indexOf(open)));
         }
 
-        let b = this.nextToken(container);
+        let b = this.nextToken(close);
 
         if( b instanceof TokenReaderError ){ return new TokenReaderError(TokenReaderError.CONTAINER_CLOSE_NOT_FOUND); }
-
-        return b.trim().substring(0, b.length - container.length);
+        
+        return b.substring(0, b.length - close.length).trim();
     }
 
     isParseFinish(){

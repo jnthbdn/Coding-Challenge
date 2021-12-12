@@ -20,9 +20,24 @@ function GoTurtleGo(){
 
     let turtle = new Turtle(width/2, height/2, -90);
     let code = codeInput.value()
-    let token = new TokenReader(code.trim() + " ");
 
     compileOutput.clear();
+    parse(code, turtle);
+    turtle.show();
+
+    if(compileOutput.isErrorLogged()){
+        compileOutput.error(`Compilation failed !`);
+    }
+    else{
+        compileOutput.good(`Compilation succeed !`);
+    }
+
+    pop();
+}
+
+function parse(code, turtle){
+
+    let token = new TokenReader(code.trim());
 
     while(!token.isParseFinish() && !compileOutput.isErrorLogged()){
         let cmd = token.nextToken()?.trim().toLowerCase();
@@ -96,7 +111,7 @@ function GoTurtleGo(){
                 break;
             }
 
-            case "cl":
+            case "cs":
                 background(50);
                 break;
 
@@ -173,19 +188,54 @@ function GoTurtleGo(){
                 break;
             }
 
+            case "repeat":{
+            
+                let attrNb = token.nextToken();
+
+                if( attrNb instanceof TokenReaderError && attrNb.error == TokenReaderError.CONTAINER_NOT_NEXT ){
+                    compileOutput.error("Missing 'nb' argument for repeat");
+                    break;
+                }
+
+                attrNb = parseInt(attrNb);
+
+                if( isNaN(attrNb) ){
+                    compileOutput.error("Bad 'nb' argument type for repeat");
+                    break;
+                }
+
+                let expr = token.nextTokenBetween('[', ']');
+                if( expr instanceof TokenReaderError ){
+                    switch(expr.error){
+                        case TokenReaderError.CONTAINER_NOT_NEXT:
+                            compileOutput.error(`Bad argument type for repeat. I am waiting for bracket ([) and get '${expr.value}'`);
+                            break;
+
+                        case TokenReaderError.CONTAINER_NOT_FOUND:
+                            compileOutput.error("Missing expression argument for repeat.")
+                            break;
+
+                        case TokenReaderError.CONTAINER_CLOSE_NOT_FOUND:
+                            compileOutput.error("Mising closing braquet (]) for repeat.")
+                            break;
+                    }
+                    break;
+                }
+
+                if( expr.trim() === "" ){
+                    compileOutput.warning("Expression is empty for repeat. I will ignore this.");
+                    break;
+                }
+
+                for(let i = 0; i < attrNb; ++i ){
+                    parse( expr, turtle );
+                }
+
+                break;
+            }
+
             default:
                 compileOutput.warning(`Unknown command '${cmd}'. I will ignore it...`);
         }
     }
-
-    turtle.show();
-
-    if(compileOutput.isErrorLogged()){
-        compileOutput.error(`Compilation failed !`);
-    }
-    else{
-        compileOutput.good(`Compilation succeed !`);
-    }
-
-    pop();
 }
