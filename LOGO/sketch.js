@@ -22,7 +22,7 @@ function GoTurtleGo(){
     let code = codeInput.value()
 
     compileOutput.clear();
-    parse(code, turtle);
+    parseExpression(code, turtle);
     turtle.show();
 
     if(compileOutput.isErrorLogged()){
@@ -35,7 +35,7 @@ function GoTurtleGo(){
     pop();
 }
 
-function parse(code, turtle){
+function parseExpression(code, turtle){
 
     let token = new TokenReader(code.trim());
 
@@ -228,7 +228,7 @@ function parse(code, turtle){
                 }
 
                 for(let i = 0; i < attrNb; ++i ){
-                    parse( expr, turtle );
+                    parseExpression( expr, turtle );
                 }
 
                 break;
