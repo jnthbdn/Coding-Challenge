@@ -42,3 +42,11 @@ Download the source files and simply run your http server in the same folder.
 | Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*`)            | :broken_heart: |
 | Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
 | Comments   | Everything beetween `;` and a newline is not parsed           | :broken_heart: |
+
+
+## :turtle: Links
+  - [Wikipedia](https://en.wikipedia.org/wiki/Logo_(programming_language))
+  - [P5.js reference](https://p5js.org/reference/)
+  - [Logo tutorial](http://cs.brown.edu/courses/bridge/1997/Resources/LogoTutorial.html)
+  - [Logo foundation](https://el.media.mit.edu/logo-foundation/)
+
