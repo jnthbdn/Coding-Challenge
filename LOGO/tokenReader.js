@@ -4,6 +4,7 @@ class TokenReader {
         this.index = 0;
         this.text = (text + " ").replaceAll("[", "[ ")          // Be sure to "tokenize" [
                                 .replaceAll("]", " ]")          // Be sure to "tokenize" ]
+                                .replaceAll(/;.*$/gm, " ")       // Remove comments
                                 .replaceAll(/\s{2,}/g, " ")     // Remove multiple whitespace
                                 .replaceAll(/\s/g, " ");        // Replace all whitespace with a space
     }

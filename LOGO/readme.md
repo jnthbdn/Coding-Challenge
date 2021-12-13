@@ -8,7 +8,7 @@ The challenge is to write a simple parser (with [P5.js](https://p5js.org/)) for 
   - A simple HTTP server (ex: `python3 -m server.http`)
 
 ## :turtle: How to run it ?
-Download the source files and simply run your http server in the same folder.
+Download the repo. files and simply run your http server in the same folder.
 
 ## :turtle: Commands
 
@@ -41,7 +41,7 @@ Download the source files and simply run your http server in the same folder.
 | :--------- | :------------------------------------------------------------ | :------------: |
 | Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*`)            | :broken_heart: |
 | Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
-| Comments   | Everything beetween `;` and a newline is not parsed           | :broken_heart: |
+| Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
 
 
 ## :turtle: Links
