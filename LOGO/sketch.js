@@ -263,7 +263,7 @@ function parseValue(token, localVariables){
             break;
     }
 
-    
+    //Arithmetic and variables
 
 
     return null;

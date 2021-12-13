@@ -24,11 +24,11 @@ Download the repo. files and simply run your http server in the same folder.
 | `ht`     |                                                   | Not showing the turtle                                                   | :green_heart:  |
 | `st`     |                                                   | Show the turtle                                                          | :green_heart:  |
 | `home`   |                                                   | Go back to the start position (and rotation)                             | :green_heart:  |
-| `label`  | **"** _text_ **"**                                | Write the text between double quote `"..."` at the turtle position       | :green_heart:  |
+| `label`  | **"** _word_  \|  **[** _string_ **]**            | Write the text between double quote `"..."` at the turtle position       | :green_heart:  |
 | `setxy`  | **xpos** **ypos**                                 | Go to the position defined by `xpos` for X axis and `ypos` for Y axis*   | :green_heart:  |
 | `repeat` | **nb** **[** _expression_ **]**                   | Execute `nb` times the expression between brackets `[ ... ]`             | :green_heart:  |
+| `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :green_heart: |
 | `random` | **max**                                           | Get a random number between 1 and `max`                                  | :broken_heart: |
-| `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :broken_heart: |
 | `if`     | **:**_condition_ **[** _expression_ **]**         | Execute the expression between brackets `[ ... ]` if `condition` is true | :broken_heart: |
 | `to`     | **name** **:**_parameters_ __expression__ **end** | Create a callable procedure named `name` with parameters                 | :broken_heart: |
 
@@ -37,11 +37,12 @@ Download the repo. files and simply run your http server in the same folder.
 
 ## :turtle: Language fonctionnalities
 
-| Command    | Description                                                   |  Available ?   |
-| :--------- | :------------------------------------------------------------ | :------------: |
-| Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*`)            | :broken_heart: |
-| Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
-| Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
+| Command      | Description                                                          |  Available ?   |
+| :----------- | :------------------------------------------------------------------- | :------------: |
+| Arithmetic   | Support arithmetic operations (`+`, `-`, `/`, `*` )                  | :broken_heart: |
+| Arithmetic 2 | Support advanced arithmetic operations (`sqrt`, `power`, `ln`, ... ) | :broken_heart: |
+| Boolean      | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`)        | :broken_heart: |
+| Comments     | Everything beetween `;` and the end of the line is not parsed        | :green_heart:  |
 
 
 ## :turtle: Links
