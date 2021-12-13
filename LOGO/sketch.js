@@ -20,9 +20,10 @@ function GoTurtleGo(){
 
     let turtle = new Turtle(width/2, height/2, -90);
     let code = codeInput.value()
+    let variables = new VariableManager();
 
     compileOutput.clear();
-    parseExpression(code, turtle);
+    parseExpression(code, turtle, variables);
     turtle.show();
 
     if(compileOutput.isErrorLogged()){
@@ -35,79 +36,99 @@ function GoTurtleGo(){
     pop();
 }
 
-function parseExpression(code, turtle){
+function validateToken(value, varName, cmdName){
+    if( value instanceof TokenReaderError && value.error == TokenReaderError.SEPARATOR_NOT_FOUND ){
+        compileOutput.error(`Missing '${varName}' argument for ${cmdName}`);
+        return null;
+    }
 
+    return value;
+}
+
+function validateTokenAndParseFloat(value, varName, cmdName){
+    if( validateToken(value, varName, cmdName) === null ){
+        return null;
+    }
+
+    let result = parseFloat(value);
+    if( isNaN(result)  ){
+        compileOutput.error(`Bad '${varName}' argument type for ${cmdName}`);
+        return null;
+    }
+
+    return result;
+}
+
+function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt){
+
+    if( value instanceof TokenReaderError ){
+        switch(value.error){
+            case TokenReaderError.CONTAINER_NOT_NEXT:
+                compileOutput.error(`Bad argument type for ${cmdName}. I am waiting for '${openTxt}' and get '${value.value}'`);
+                break;
+
+            case TokenReaderError.CONTAINER_NOT_FOUND:
+                compileOutput.error(`Missing argument for ${cmdName}.`)
+                break;
+
+            case TokenReaderError.CONTAINER_CLOSE_NOT_FOUND:
+                compileOutput.error(`Missing argument close token ('${closeTxt}') for ${cmdName}.`)
+                break;
+
+            default:
+                compileOutput.error(`Unkown error for ${cmdName}.`)
+                break;
+        }
+
+        return null;
+    }
+
+    return value;
+}
+
+function parseExpression(code, turtle, globalVariables){
+
+    let localVariables = new VariableManager();
     let token = new TokenReader(code.trim());
 
     while(!token.isParseFinish() && !compileOutput.isErrorLogged()){
         let cmd = token.nextToken()?.trim().toLowerCase();
 
         switch( cmd ){
-            case "fd": {     
-                let attr = token.nextToken();
-                if( attr instanceof TokenReaderError && attr.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'distance' argument for fd");
-                    break;
-                }
+            case "fd": {   
+                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "fd");  
+                
+                if(arg !== null )
+                    turtle.moveForward(arg);
 
-                attr = parseFloat(attr);
-                if( isNaN(attr)  ){
-                    compileOutput.error("Bad 'distance' argument type for fd");
-                    break;
-                }
-
-                turtle.moveForward(attr);
                 break;
             }
 
             case "bk": {     
-                let attr = token.nextToken();
-                if( attr instanceof TokenReaderError && attr.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'distance' argument for bk");
-                    break;
-                }
+                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "bk"); 
+                
+                
+                if(arg !== null )
+                    turtle.moveBackward(arg);
 
-                attr = parseFloat(attr);
-                if( isNaN(attr)  ){
-                    compileOutput.error("Bad 'distance' argument type for bk");
-                    break;
-                }
-
-                turtle.moveBackward(attr);
                 break;
             }
             
             case "rt": {
-                let attr = token.nextToken();
-                if( attr instanceof TokenReaderError && attr.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'angle' argument for rt");
-                    break;
-                }
+                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "rt");  
 
-                attr = parseFloat(attr);
-                if( isNaN(attr)  ){
-                    compileOutput.error("Bad 'angle' argument type for rt");
-                    break;
-                }
+                if(arg !== null )
+                    turtle.turnRight(arg);
 
-                turtle.turnRight(attr);
                 break;
             }
 
             case "lt":{
-                let attr = token.nextToken();
-                if( attr instanceof TokenReaderError && attr.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'angle' argument for lf");
-                    break;
-                }
+                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "lt");  
 
-                attr = parseFloat(attr);
-                if( isNaN(attr)  ){
-                    compileOutput.error("Bad 'angle' argument type for lf");
-                    break;
-                }
+                if(arg !== null )
+                    turtle.turnLeft(arg);
 
-                turtle.turnLeft(attr);
                 break;
             }
 
@@ -136,89 +157,36 @@ function parseExpression(code, turtle){
                 break;
 
             case "label": {
-                let attr = token.nextTokenBetween('"');
-                if( attr instanceof TokenReaderError ){
-                    switch(attr.error){
-                        case TokenReaderError.CONTAINER_NOT_NEXT:
-                            compileOutput.error(`Bad argument type for label. I am waiting for '"' and get '${attr.value}'`);
-                            break;
-
-                        case TokenReaderError.CONTAINER_NOT_FOUND:
-                            compileOutput.error("Missing argument for label.")
-                            break;
-
-                        case TokenReaderError.CONTAINER_CLOSE_NOT_FOUND:
-                            compileOutput.error("Mising closing double quote for label.")
-                            break;
-                    }
+                //let arg = validateBetweenToken(token.nextTokenBetween('"'), "label", '"');
+                let arg = validateToken(token.seekNextToken(), "word or string", 'label');
+                
+                if( arg === null )
                     break;
-                }
 
-                turtle.write(attr);
+                arg = parseValue(token, globalVariables.concatAndClone(localVariables));
+
+                if(arg !== null )
+                    turtle.write(arg);
+
                 break;
             }
 
             case "setxy":{
+                let argX = validateTokenAndParseFloat(token.nextToken(), "posX", "setxy");
+                let argY = validateTokenAndParseFloat(token.nextToken(), "posY", "setxy");
                 
-                let attrX = token.nextToken();
-                if( attrX instanceof TokenReaderError && attrX.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'posX' argument for setxy");
-                    break;
-                }
+                if( argX !== null && argY !== null)
+                    turtle.goTo(argX, argY);
 
-                let attrY = token.nextToken();
-                if( attrY instanceof TokenReaderError && attrY.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'posY' argument for setxy");
-                    break;
-                }
-
-                attrX = parseFloat(attrX);
-                attrY = parseFloat(attrY);
-
-                if( isNaN(attrX) ){
-                    compileOutput.error("Bad 'posX' argument type for setxy");
-                    break;
-                }
-                if( isNaN(attrY) ){
-                    compileOutput.error("Bad 'posY' argument type for setxy");
-                    break;
-                }
-
-                turtle.goTo(attrX, attrY);
                 break;
             }
 
             case "repeat":{
-            
-                let attrNb = token.nextToken();
+                let argNb = validateTokenAndParseFloat(token.nextToken(), "nb", "repeat");
 
-                if( attrNb instanceof TokenReaderError && attrNb.error == TokenReaderError.CONTAINER_NOT_NEXT ){
-                    compileOutput.error("Missing 'nb' argument for repeat");
-                    break;
-                }
+                let expr = validateBetweenToken(token.nextTokenBetween('[', ']'), "repeat", '[', ']')
 
-                attrNb = parseInt(attrNb);
-
-                if( isNaN(attrNb) ){
-                    compileOutput.error("Bad 'nb' argument type for repeat");
-                    break;
-                }
-
-                let expr = token.nextTokenBetween('[', ']');
-                if( expr instanceof TokenReaderError ){
-                    switch(expr.error){
-                        case TokenReaderError.CONTAINER_NOT_NEXT:
-                            compileOutput.error(`Bad argument type for repeat. I am waiting for bracket ([) and get '${expr.value}'`);
-                            break;
-
-                        case TokenReaderError.CONTAINER_NOT_FOUND:
-                            compileOutput.error("Missing expression argument for repeat.")
-                            break;
-
-                        case TokenReaderError.CONTAINER_CLOSE_NOT_FOUND:
-                            compileOutput.error("Mising closing braquet (]) for repeat.")
-                            break;
-                    }
+                if( argNb === null || expr === null ){
                     break;
                 }
 
@@ -227,8 +195,41 @@ function parseExpression(code, turtle){
                     break;
                 }
 
-                for(let i = 0; i < attrNb; ++i ){
-                    parseExpression( expr, turtle );
+                for(let i = 0; i < argNb; ++i ){
+                    parseExpression( expr, turtle, globalVariables.concatAndClone(localVariables) );
+                }
+
+                break;
+            }
+
+            case "make":{
+                let argName = validateBetweenToken(token.nextTokenBetween('"', ' '), "make", '"', ' ');
+                let argValue = validateToken(token.seekNextToken(), "value", "make");
+
+                if( argName === null || argValue === null){
+                    break;
+                }
+
+
+                if(argName.length == 0){
+                    compileOutput.error("Name cannot be empty for make.");
+                    break;
+                }
+
+                if(!isNaN( parseInt(argName[0]))){
+                    compileOutput.error("Name cannot start with number (only letter) for make.");
+                    break;
+                }
+
+                if( localVariables.isExists(argName) ){
+                    compileOutput.error("Variable name already exists for make.");
+                    break;
+                }
+
+                argValue = parseValue(token, globalVariables.concatAndClone(localVariables));
+
+                if( argValue !== null){
+                    localVariables.add(argName, argValue);
                 }
 
                 break;
@@ -238,4 +239,32 @@ function parseExpression(code, turtle){
                 compileOutput.warning(`Unknown command '${cmd}'. I will ignore it...`);
         }
     }
+}
+
+/**
+ * This function parse a "value" data (word, string, number, arithmetics operations...).
+ * It is assumed that a valid token is available.
+ */
+function parseValue(token, localVariables){
+
+    let seek = token.seekNextToken();
+
+    switch(seek[0]){
+
+        // is a word ?
+        case '"':
+            return token.nextTokenBetween('"', ' ');
+
+        // is a string ?
+        case '[':
+            return token.nextTokenBetween('[', ']');
+
+        default:
+            break;
+    }
+
+    
+
+
+    return null;
 }
