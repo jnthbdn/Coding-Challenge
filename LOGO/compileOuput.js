@@ -18,6 +18,10 @@ class CompileOutput{
         this.output.html( this.output.html() + `<br/><span style="color: #DD8800;">${msg}</span>`);
     }
 
+    info(msg){
+        this.output.html( this.output.html() + `<br/><span style="color: #000000;">${msg}</span>`);
+    }
+
     good(msg){
         this.output.html( this.output.html() + `<br/><span style="color: #00AA00;">${msg}</span>`);
     }
