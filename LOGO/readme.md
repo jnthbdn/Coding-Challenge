@@ -10,8 +10,16 @@ The challenge is to write a simple parser (with [P5.js](https://p5js.org/)) for 
 ## :turtle: How to run it ?
 Download the repo. files and simply run your http server in the same folder.
 
-## :turtle: Commands
+## :turtle: Useful Links
+  - [Wikipedia](https://en.wikipedia.org/wiki/Logo_(programming_language))
+  - [P5.js reference](https://p5js.org/reference/)
+  - [Logo tutorial](http://cs.brown.edu/courses/bridge/1997/Resources/LogoTutorial.html)
+  - [Logo foundation](https://el.media.mit.edu/logo-foundation/)
 
+## :turtle: Language
+Here you can find all the supported LOGO lang features by this parser.
+
+### :turtle: Commands
 | Command  | Arguments                                         | Description                                                              |  Available ?   |
 | :------- | :------------------------------------------------ | :----------------------------------------------------------------------- | :------------: |
 | `fd`     | **distance**                                      | Move the turtle foward by `distance` pixel                               | :green_heart:  |
@@ -27,27 +35,73 @@ Download the repo. files and simply run your http server in the same folder.
 | `label`  | **"** _word_  \|  **[** _string_ **]**            | Write the text between double quote `"..."` at the turtle position       | :green_heart:  |
 | `setxy`  | **xpos** **ypos**                                 | Go to the position defined by `xpos` for X axis and `ypos` for Y axis*   | :green_heart:  |
 | `repeat` | **nb** **[** _expression_ **]**                   | Execute `nb` times the expression between brackets `[ ... ]`             | :green_heart:  |
-| `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :green_heart: |
-| `random` | **max**                                           | Get a random number between 1 and `max`                                  | :broken_heart: |
+| `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :green_heart:  |
+| `print`  | **value**                                         | Print a `value` in the compilation console                               | :broken_heart: |
 | `if`     | **:**_condition_ **[** _expression_ **]**         | Execute the expression between brackets `[ ... ]` if `condition` is true | :broken_heart: |
 | `to`     | **name** **:**_parameters_ __expression__ **end** | Create a callable procedure named `name` with parameters                 | :broken_heart: |
 
 
 \* The (0, 0) point is the home position (it should be the center of the screen), the rotation will be the same. 
 
-## :turtle: Language fonctionnalities
 
-| Command      | Description                                                          |  Available ?   |
-| :----------- | :------------------------------------------------------------------- | :------------: |
-| Arithmetic   | Support arithmetic operations (`+`, `-`, `/`, `*` )                  | :broken_heart: |
-| Arithmetic 2 | Support advanced arithmetic operations (`sqrt`, `power`, `ln`, ... ) | :broken_heart: |
-| Boolean      | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`)        | :broken_heart: |
-| Comments     | Everything beetween `;` and the end of the line is not parsed        | :green_heart:  |
+### :turtle: Arithmetic functions
+
+| Function | Arguments       | Description                                |  Available ?   |
+| :------- | :-------------- | :----------------------------------------- | :------------: |
+| `random` | **max**         | Get a random number between 0 and `max`    | :broken_heart: |
+| `cos`    | **value**       | Get the cosinus of `value`                 | :broken_heart: |
+| `sin`    | **value**       | Get the sinus of `value`                   | :broken_heart: |
+| `tan`    | **value**       | Get the tangent of `value`                 | :broken_heart: |
+| `arccos` | **value**       | Get the arc cosinus of `value`             | :broken_heart: |
+| `arcsin` | **value**       | Get the arc sinus of `value`               | :broken_heart: |
+| `arctan` | **value**       | Get the arc tangent of `value`             | :broken_heart: |
+| `sqrt`   | **value**       | Get the square root of `vaue`              | :broken_heart: |
+| `ln`     | **value**       | Get the natural logarithm of `value`       | :broken_heart: |
+| `power`  | **value** **p** | Get the result of `value` to the `p` power | :broken_heart: |
 
 
-## :turtle: Links
-  - [Wikipedia](https://en.wikipedia.org/wiki/Logo_(programming_language))
-  - [P5.js reference](https://p5js.org/reference/)
-  - [Logo tutorial](http://cs.brown.edu/courses/bridge/1997/Resources/LogoTutorial.html)
-  - [Logo foundation](https://el.media.mit.edu/logo-foundation/)
+### :turtle: Other
 
+| Feature    | Description                                                   |  Available ?   |
+| :--------- | :------------------------------------------------------------ | :------------: |
+| Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :broken_heart: |
+| Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
+| Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
+
+
+## Syntax Diagram
+### language
+![language](doc/language.png)
+
+### expression
+![expression](doc/expression.png)
+
+### distance
+![distance](doc/distance.png)
+
+### angle
+![angle](doc/angle.png)
+
+### value
+![value](doc/value.png)
+
+### math_function
+![math_function](doc/math_function.png)
+
+### operator
+![operator](doc/operator.png)
+
+### variable
+![variable](doc/variable.png)
+
+### number
+![number](doc/number.png)
+
+### integer
+![integer](doc/integer.png)
+
+### word
+![word](doc/word.png)
+
+### string
+![string](doc/string.png)
