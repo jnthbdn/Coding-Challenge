@@ -85,14 +85,20 @@ Here you can find all the supported LOGO lang features by this parser.
 ### value
 ![value](doc/value.png)
 
+### numeric_value
+![value](doc/value.png)
+
 ### math_function
 ![math_function](doc/math_function.png)
 
 ### operator
 ![operator](doc/operator.png)
 
-### variable
-![variable](doc/variable.png)
+### text_variable
+![variable](doc/text_variable.png)
+
+### numeric_variable
+![variable](doc/numeric_variable.png)
 
 ### number
 ![number](doc/number.png)

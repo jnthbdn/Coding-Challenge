@@ -1,0 +1,27 @@
+language ::= (expression ('\r\n'|'\n')? )+
+
+expression ::= 'fd' distance| 'bk' distance | 'rt' angle | 'lt' angle | 'cs' | 'pu' | 'pd' | 'ht' | 'st' | 'home' | 'label' (word | string) | 'setxy' number number | 'repeat' integer '[' expression ']' | 'make' word value | 'print' value
+
+distance ::= number
+
+angle ::= number
+
+value ::= word | string | text_variable | numeric_value
+
+numeric_value ::= (number | math_function | numeric_variable ) ( operator (number | math_function | numeric_variable))*
+
+text_variable ::= ':' word
+
+numeric_variable ::= ':' word
+
+math_function ::= 'random' integer | 'cos' number  | 'sin' number  | 'tan' number  | 'arccos' number  | 'arcsin' number  | 'arctan' number | 'sqrt' number | 'ln' number | 'power' number number 
+
+number ::= '0-9'+ '.'? '0-9'*
+
+integer ::= '0-9'+
+
+word ::= '"' 'a-Z'+
+
+string ::= '[' 'a-Z '+ ']'
+
+operator ::= '+' | '-' | '*' | '/'
