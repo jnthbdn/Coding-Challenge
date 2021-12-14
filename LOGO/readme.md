@@ -86,7 +86,7 @@ Here you can find all the supported LOGO lang features by this parser.
 ![value](doc/value.png)
 
 ### numeric_value
-![value](doc/value.png)
+![value](doc/numeric_value.png)
 
 ### math_function
 ![math_function](doc/math_function.png)
