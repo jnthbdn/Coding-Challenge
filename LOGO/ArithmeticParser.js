@@ -90,10 +90,6 @@ class ArithmeticParser {
         this.inputs.forEach( (elem) => {
 
             if( elem.isOperator ){
-
-                console.log(elem);
-                console.log(operatorStack);
-
                 if( operatorStack.length > 0 && operatorStack[operatorStack.length-1].priority > elem.priority ){
                     while( operatorStack.length > 0){
                         this.rpn.push( operatorStack.pop() )
