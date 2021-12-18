@@ -15,6 +15,7 @@ Download the repo. files and simply run your http server in the same folder.
   - [P5.js reference](https://p5js.org/reference/)
   - [Logo tutorial](http://cs.brown.edu/courses/bridge/1997/Resources/LogoTutorial.html)
   - [Logo foundation](https://el.media.mit.edu/logo-foundation/)
+  - [Shunting-yard algorithm](https://en.wikipedia.org/wiki/Shunting-yard_algorithm)
 
 ## :turtle: Language
 Here you can find all the supported LOGO lang features by this parser.
