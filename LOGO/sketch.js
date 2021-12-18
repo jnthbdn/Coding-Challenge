@@ -1,24 +1,24 @@
 let codeInput;
 let compileOutput;
 
-function setup(){
+function setup() {
     createCanvas(600, 600);
     angleMode(DEGREES);
 
     codeInput = select("#code");
-    compileOutput = new CompileOutput( select("#error") );
+    compileOutput = new CompileOutput(select("#error"));
 
     codeInput.input(GoTurtleGo);
     GoTurtleGo();
 }
 
-function draw(){}
+function draw() { }
 
-function GoTurtleGo(){
+function GoTurtleGo() {
     background(40);
     push();
 
-    let turtle = new Turtle(width/2, height/2, -90);
+    let turtle = new Turtle(width / 2, height / 2, -90);
     let code = codeInput.value()
     let variables = new VariableManager();
 
@@ -26,18 +26,18 @@ function GoTurtleGo(){
     parseExpression(code, turtle, variables);
     turtle.show();
 
-    if(compileOutput.isErrorLogged()){
+    if (compileOutput.isErrorLogged()) {
         compileOutput.error(`Compilation failed !`);
     }
-    else{
+    else {
         compileOutput.good(`Compilation succeed !`);
     }
 
     pop();
 }
 
-function validateToken(value, varName, cmdName){
-    if( value instanceof TokenReaderError && value.error == TokenReaderError.SEPARATOR_NOT_FOUND ){
+function validateToken(value, varName, cmdName) {
+    if (value instanceof TokenReaderError && value.error == TokenReaderError.SEPARATOR_NOT_FOUND) {
         compileOutput.error(`Missing '${varName}' argument for ${cmdName}`);
         return null;
     }
@@ -45,13 +45,13 @@ function validateToken(value, varName, cmdName){
     return value;
 }
 
-function validateTokenAndParseFloat(value, varName, cmdName){
-    if( validateToken(value, varName, cmdName) === null ){
+function validateTokenAndParseFloat(value, varName, cmdName) {
+    if (validateToken(value, varName, cmdName) === null) {
         return null;
     }
 
     let result = parseFloat(value);
-    if( isNaN(result)  ){
+    if (isNaN(result)) {
         compileOutput.error(`Bad '${varName}' argument type for ${cmdName}`);
         return null;
     }
@@ -59,10 +59,10 @@ function validateTokenAndParseFloat(value, varName, cmdName){
     return result;
 }
 
-function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt){
+function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt) {
 
-    if( value instanceof TokenReaderError ){
-        switch(value.error){
+    if (value instanceof TokenReaderError) {
+        switch (value.error) {
             case TokenReaderError.CONTAINER_NOT_NEXT:
                 compileOutput.error(`Bad argument type for ${cmdName}. I am waiting for '${openTxt}' and get '${value.value}'`);
                 break;
@@ -86,47 +86,47 @@ function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt){
     return value;
 }
 
-function parseExpression(code, turtle, globalVariables){
+function parseExpression(code, turtle, globalVariables) {
 
     let localVariables = new VariableManager();
     let token = new TokenReader(code.trim());
 
-    while(!token.isParseFinish() && !compileOutput.isErrorLogged()){
+    while (!token.isParseFinish() && !compileOutput.isErrorLogged()) {
         let cmd = token.nextToken()?.trim().toLowerCase();
 
-        switch( cmd ){
-            case "fd": {   
-                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "fd");  
-                
-                if(arg !== null )
+        switch (cmd) {
+            case "fd": {
+                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "fd");
+
+                if (arg !== null)
                     turtle.moveForward(arg);
 
                 break;
             }
 
-            case "bk": {     
-                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "bk"); 
-                
-                
-                if(arg !== null )
+            case "bk": {
+                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "bk");
+
+
+                if (arg !== null)
                     turtle.moveBackward(arg);
 
                 break;
             }
-            
-            case "rt": {
-                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "rt");  
 
-                if(arg !== null )
+            case "rt": {
+                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "rt");
+
+                if (arg !== null)
                     turtle.turnRight(arg);
 
                 break;
             }
 
-            case "lt":{
-                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "lt");  
+            case "lt": {
+                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "lt");
 
-                if(arg !== null )
+                if (arg !== null)
                     turtle.turnLeft(arg);
 
                 break;
@@ -159,76 +159,71 @@ function parseExpression(code, turtle, globalVariables){
             case "label": {
                 //let arg = validateBetweenToken(token.nextTokenBetween('"'), "label", '"');
                 let arg = validateToken(token.seekNextToken(), "word or string", 'label');
-                
-                if( arg === null )
+
+                if (arg === null)
                     break;
 
                 arg = parseValue(token, globalVariables.concatAndClone(localVariables));
 
-                if(arg !== null )
+                if (arg !== null)
                     turtle.write(arg);
 
                 break;
             }
 
-            case "setxy":{
+            case "setxy": {
                 let argX = validateTokenAndParseFloat(token.nextToken(), "posX", "setxy");
                 let argY = validateTokenAndParseFloat(token.nextToken(), "posY", "setxy");
-                
-                if( argX !== null && argY !== null)
+
+                if (argX !== null && argY !== null)
                     turtle.goTo(argX, argY);
 
                 break;
             }
 
-            case "repeat":{
+            case "repeat": {
                 let argNb = validateTokenAndParseFloat(token.nextToken(), "nb", "repeat");
 
                 let expr = validateBetweenToken(token.nextTokenBetween('[', ']'), "repeat", '[', ']')
 
-                if( argNb === null || expr === null ){
+                if (argNb === null || expr === null) {
                     break;
                 }
 
-                if( expr.trim() === "" ){
+                if (expr.trim() === "") {
                     compileOutput.warning("Expression is empty for repeat. I will ignore this.");
                     break;
                 }
 
-                for(let i = 0; i < argNb; ++i ){
-                    parseExpression( expr, turtle, globalVariables.concatAndClone(localVariables) );
+                for (let i = 0; i < argNb; ++i) {
+                    parseExpression(expr, turtle, globalVariables.concatAndClone(localVariables));
                 }
 
                 break;
             }
 
-            case "make":{
+            case "make": {
                 let argName = validateBetweenToken(token.nextTokenBetween('"', ' '), "make", '"', ' ');
-                let argValue = validateToken(token.seekNextToken(), "value", "make");
+                //let argValue = validateToken(token.seekNextToken(), "value", "make");
 
-                if( argName === null || argValue === null){
+                if (argName === null) {
                     break;
                 }
 
 
-                if(argName.length == 0){
+                if (argName.length == 0) {
                     compileOutput.error("Name cannot be empty for make.");
                     break;
                 }
 
-                if(!isNaN( parseInt(argName[0]))){
-                    compileOutput.error("Name cannot start with number (only letter) for make.");
+                if (localVariables.isExists(argName)) {
+                    compileOutput.error(`Variable name '${argName}' already exists for make.`);
                     break;
                 }
 
-                if( localVariables.isExists(argName) ){
-                    compileOutput.error("Variable name already exists for make.");
-                    break;
-                }
+                let argValue = parseValue(token, globalVariables.concatAndClone(localVariables));
 
-                argValue = parseValue(token, globalVariables.concatAndClone(localVariables));
-
-                if( argValue !== null){
+                if (argValue !== null) {
                     localVariables.add(argName, argValue);
                 }
 
@@ -245,26 +240,211 @@ function parseExpression(code, turtle, globalVariables){
  * This function parse a "value" data (word, string, number, arithmetics operations...).
  * It is assumed that a valid token is available.
  */
-function parseValue(token, localVariables){
+function parseValue(token, localVariables) {
 
     let seek = token.seekNextToken();
 
-    switch(seek[0]){
+    // text things
+    switch (seek[0]) {
 
-        // is a word ?
+        // word
         case '"':
             return token.nextTokenBetween('"', ' ');
 
-        // is a string ?
+        // string
         case '[':
             return token.nextTokenBetween('[', ']');
+
+        //is a variable containing text ?
+        case ":": {
+            let varName = seek.substring(1);
+
+            if (!localVariables.isExists(varName)) {
+                compileOutput.error(`Variable name '${varName}' does not exists.`);
+                return null;
+            }
+
+            let varValue = localVariables.get(varName);
+            if (isNaN(varValue)) {
+                token.nextToken();
+                return varValue
+            }
+            break;
+        }
 
         default:
             break;
     }
 
     //Arithmetic and variables
+    return parseNumericValue(token, localVariables);
+}
 
+function parseNumericValue(token, localVariables) {
 
-    return null;
+    let isLastTokenOperator = false;
+    let isParsing = true;
+    let arithParser = new ArithmeticParser(compileOutput);
+
+    while (isParsing) {
+
+        let seek = token.seekNextCharacter();
+
+        // Ignore space
+        if (seek == ' ') {
+            token.nextCharacter();
+        }
+        // Numeric variable
+        else if (seek == ':') {
+            let varName = token.nextTokenBetween(':', ' ');
+
+            if (!localVariables.isExists(varName)) {
+                compileOutput.error(`Variable name '${varName}' does not exists.`);
+                return null;
+            }
+
+            let varValue = localVariables.get(varName);
+            if (!isNaN(varValue)) {
+                
+                // SAVE THE VALUE AND ADD IT FOR ARITHMETIC CALCULUS
+                console.log(`get variable [${varValue}] : '${varValue}'`);
+            }
+            else {
+                compileOutput.error(`Variable '${varName}' is not numeric value. I can't make any arithmetic on it.`);
+                return null;
+            }
+        }
+        // Aithmetic operator
+        else if( ['+', '-', '*', '/'].includes(seek) ){
+            let operator = token.nextCharacter();
+            
+            if( isLastTokenOperator ){
+                compileOutput.error(`An operator cannot follow another operator`);
+                return null;
+            }
+            else{
+                isLastTokenOperator = true;
+            }
+
+            switch(operator){
+                case '+':
+                    arithParser.addOp();
+                    break;
+                    
+                case '-':
+                    arithParser.substactOp();
+                    break;
+                    
+                case '*':
+                    arithParser.multOp();
+                    break;
+                    
+                case '/':
+                    arithParser.divideOp();
+                    break;
+            }
+        }
+        // Number
+        else if( isCharNumber(seek) ){
+            let isPoint = false;
+            let num = token.nextCharacter();
+
+            let c = token.seekNextCharacter();
+            while( c != null && ( isCharNumber(c) || c == '.')){
+                if( c === '.' ){
+                    if( isPoint ){
+                        compileOutput.error(`A numeric value can't have more than 1 decimal sign (.).`);
+                        return null;
+                    }
+                    else{
+                        isPoint = true;
+                    }
+                }
+
+                num += token.nextCharacter();
+                c = token.seekNextCharacter();
+            }
+
+            arithParser.number(parseFloat(num));
+            isLastTokenOperator = false;
+        }
+        // Math function
+        else if( ['r', 'c', 's', 't', 'a', 'l', 'p'].includes(seek) ){
+            let fct = token.seekNextToken();
+
+            switch( fct ){
+                case "random":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "cos":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "sin":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "tan":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "arccos":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "arcsin":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "arctan":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "sqrt":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "ln":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                case "power":
+                    token.nextToken();
+                    isLastTokenOperator = false;
+                    break;
+
+                default:
+                    isParsing = false;
+                    break;
+            }
+        }
+        // Stop parsing
+        else{
+            console.log("Stop parsing value")
+            isParsing = false;
+        }
+
+    }
+
+    if( isLastTokenOperator ){
+        compileOutput.error(`An arithmetic expression cannot finish with an operator.`);
+        return null;
+    }
+
+    // Execute the arithmetique calcul
+    return arithParser.evaluate();
+}
+
+function isCharNumber(c){
+    return ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c);
 }
