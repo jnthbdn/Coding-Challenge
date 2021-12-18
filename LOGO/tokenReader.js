@@ -51,6 +51,27 @@ class TokenReader {
         return b.substring(0, b.length).trim();
     }
 
+    seekNextCharacter(){
+        if( this.index >= this.text.length - 1 ){
+            return null;
+        } 
+
+        return this.text[this.index];
+    }
+
+    nextCharacter(){
+        let c = this.seekNextCharacter();
+
+        if( c == null ){
+            return null;
+        }
+
+        this.index++;
+        return c;
+    }
+
+
+
     isParseFinish(){
         return this.index >= this.text.trim().length;
     }
