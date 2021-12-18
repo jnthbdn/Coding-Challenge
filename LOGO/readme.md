@@ -47,25 +47,25 @@ Here you can find all the supported LOGO lang features by this parser.
 
 ### :turtle: Arithmetic functions
 
-| Function | Arguments       | Description                                |  Available ?   |
-| :------- | :-------------- | :----------------------------------------- | :------------: |
-| `random` | **max**         | Get a random number between 0 and `max`    | :broken_heart: |
-| `cos`    | **value**       | Get the cosinus of `value`                 | :broken_heart: |
-| `sin`    | **value**       | Get the sinus of `value`                   | :broken_heart: |
-| `tan`    | **value**       | Get the tangent of `value`                 | :broken_heart: |
-| `arccos` | **value**       | Get the arc cosinus of `value`             | :broken_heart: |
-| `arcsin` | **value**       | Get the arc sinus of `value`               | :broken_heart: |
-| `arctan` | **value**       | Get the arc tangent of `value`             | :broken_heart: |
-| `sqrt`   | **value**       | Get the square root of `vaue`              | :broken_heart: |
-| `ln`     | **value**       | Get the natural logarithm of `value`       | :broken_heart: |
-| `power`  | **value** **p** | Get the result of `value` to the `p` power | :broken_heart: |
+| Function | Arguments       | Description                                 |  Available ?   |
+| :------- | :-------------- | :------------------------------------------ | :------------: |
+| `random` | **max**         | Get a random number between 0 and `max`     | :green_heart:  |
+| `cos`    | **angle**       | Get the cosinus of `angle`  (in degrees)    | :green_heart:  |
+| `sin`    | **angle**       | Get the sinus of `angle` (in degrees)       | :green_heart:  |
+| `tan`    | **angle**       | Get the tangent of `angle` (in degrees)     | :green_heart:  |
+| `arccos` | **value**       | Get the arc cosinus (in degrees) of `value` | :green_heart:  |
+| `arcsin` | **value**       | Get the arc sinus (in degrees) of `value`   | :green_heart:  |
+| `arctan` | **value**       | Get the arc tangent (in degrees) of `value` | :green_heart:  |
+| `sqrt`   | **value**       | Get the square root of `value`              | :green_heart:  |
+| `ln`     | **value**       | Get the natural logarithm of `value`        | :green_heart:  |
+| `power`  | **value** **p** | Get the result of `value` to the `p` power  | :green_heart: |
 
 
 ### :turtle: Other
 
 | Feature    | Description                                                   |  Available ?   |
 | :--------- | :------------------------------------------------------------ | :------------: |
-| Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart: |
+| Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart:  |
 | Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
 | Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
 

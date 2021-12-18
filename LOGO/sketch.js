@@ -59,6 +59,18 @@ function validateTokenAndParseFloat(value, varName, cmdName) {
     return result;
 }
 
+function validateTokenAndParseInt(value, varName, cmdName) {
+
+    let result = validateTokenAndParseFloat(value, varName, cmdName);
+
+    if( result == null ){
+        return null;
+    }
+    else{
+        return Math.floor(result);
+    }
+}
+
 function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt) {
 
     if (value instanceof TokenReaderError) {
@@ -84,6 +96,18 @@ function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt) {
     }
 
     return value;
+}
+
+function isCharNumber(c){
+    return ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c);
+}
+
+function degToRad(d){
+    return d * (Math.PI / 180);
+}
+
+function radToDeg(r){
+    return r / (Math.PI / 180);
 }
 
 function parseExpression(code, turtle, globalVariables) {
@@ -236,10 +260,6 @@ function parseExpression(code, turtle, globalVariables) {
     }
 }
 
-/**
- * This function parse a "value" data (word, string, number, arithmetics operations...).
- * It is assumed that a valid token is available.
- */
 function parseValue(token, localVariables) {
 
     let seek = token.seekNextToken();
@@ -373,55 +393,126 @@ function parseNumericValue(token, localVariables) {
             let fct = token.seekNextToken();
 
             switch( fct ){
-                case "random":
+                case "random":{
                     token.nextToken();
-                    isLastTokenOperator = false;
-                    break;
+                    let maxArg = validateTokenAndParseInt(token.nextToken(), "max", "random");
 
-                case "cos":
-                    token.nextToken();
-                    isLastTokenOperator = false;
-                    break;
+                    if( maxArg != null){
+                        arithParser.number( Math.floor( Math.random() * maxArg ) );
+                    }
 
-                case "sin":
-                    token.nextToken();
                     isLastTokenOperator = false;
                     break;
+                }
 
-                case "tan":
+                case "cos":{
                     token.nextToken();
-                    isLastTokenOperator = false;
-                    break;
+                    let angleArg = validateTokenAndParseFloat(token.nextToken(), "angle", "cos");
 
-                case "arccos":
-                    token.nextToken();
-                    isLastTokenOperator = false;
-                    break;
+                    if( angleArg != null){
+                        arithParser.number( Math.cos( degToRad(angleArg) ) );
+                    }
 
-                case "arcsin":
-                    token.nextToken();
                     isLastTokenOperator = false;
                     break;
+                }
 
-                case "arctan":
+                case "sin":{
                     token.nextToken();
-                    isLastTokenOperator = false;
-                    break;
+                    let angleArg = validateTokenAndParseFloat(token.nextToken(), "angle", "sin");
 
-                case "sqrt":
-                    token.nextToken();
-                    isLastTokenOperator = false;
-                    break;
+                    if( angleArg != null){
+                        arithParser.number( Math.sin( degToRad(angleArg) ) );
+                    }
 
-                case "ln":
-                    token.nextToken();
                     isLastTokenOperator = false;
                     break;
+                }
 
-                case "power":
+                case "tan":{
                     token.nextToken();
+                    let angleArg = validateTokenAndParseFloat(token.nextToken(), "angle", "tan");
+
+                    if( angleArg != null){
+                        arithParser.number( Math.tan( degToRad(angleArg) ) );
+                    }
+
                     isLastTokenOperator = false;
                     break;
+                }
+
+                case "arccos":{
+                    token.nextToken();
+                    let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "arccos");
+
+                    if( valueArg != null){
+                        arithParser.number( radToDeg( Math.acos( valueArg) ) );
+                    }
+
+                    isLastTokenOperator = false;
+                    break;
+                }
+
+                case "arcsin":{
+                    token.nextToken();
+                    let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "arcsin");
+
+                    if( valueArg != null){
+                        arithParser.number( radToDeg( Math.asin( valueArg) ) );
+                    }
+
+                    isLastTokenOperator = false;
+                    break;
+                }
+
+                case "arctan":{
+                    token.nextToken();
+                    let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "arctan");
+
+                    if( valueArg != null){
+                        arithParser.number( radToDeg( Math.atan( valueArg) ) );
+                    }
+
+                    isLastTokenOperator = false;
+                    break;
+                }
+
+                case "sqrt":{
+                    token.nextToken();
+                    let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "sqrt");
+
+                    if( valueArg != null){
+                        arithParser.number( Math.sqrt(valueArg) );
+                    }
+
+                    isLastTokenOperator = false;
+                    break;
+                }
+
+                case "ln":{
+                    token.nextToken();
+                    let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "ln");
+
+                    if( valueArg != null){
+                        arithParser.number( Math.log(valueArg) );
+                    }
+
+                    isLastTokenOperator = false;
+                    break;
+                }
+
+                case "power":{
+                    token.nextToken();
+                    let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "power");
+                    let powerArg = validateTokenAndParseFloat(token.nextToken(), "p", "power");
+
+                    if( valueArg != null && powerArg != null){
+                        arithParser.number( Math.pow(valueArg, powerArg) );
+                    }
+
+                    isLastTokenOperator = false;
+                    break;
+                }
 
                 default:
                     isParsing = false;
@@ -443,8 +534,4 @@ function parseNumericValue(token, localVariables) {
 
     // Execute the arithmetique calcul
     return arithParser.evaluate();
-}
-
-function isCharNumber(c){
-    return ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c);
 }
