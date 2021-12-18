@@ -250,7 +250,24 @@ function parseExpression(code, turtle, globalVariables) {
                 if (argValue !== null) {
                     localVariables.add(argName, argValue);
                 }
+                else{
+                    compileOutput.error(`Missing 'value' argument type for make`);
+                }
 
+                console.table(localVariables.dict);
+
+                break;
+            }
+
+            case "print": {
+                let argValue = parseValue(token, globalVariables.concatAndClone(localVariables));
+
+                if (argValue !== null) {
+                    compileOutput.info(argValue);
+                }
+                else{
+                    compileOutput.error(`Missing 'value' argument type for print`);
+                }
                 break;
             }
 
@@ -325,9 +342,7 @@ function parseNumericValue(token, localVariables) {
 
             let varValue = localVariables.get(varName);
             if (!isNaN(varValue)) {
-                
-                // SAVE THE VALUE AND ADD IT FOR ARITHMETIC CALCULUS
-                console.log(`get variable [${varValue}] : '${varValue}'`);
+                arithParser.number(varValue);
             }
             else {
                 compileOutput.error(`Variable '${varName}' is not numeric value. I can't make any arithmetic on it.`);
