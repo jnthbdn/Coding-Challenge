@@ -37,7 +37,7 @@ Here you can find all the supported LOGO lang features by this parser.
 | `setxy`  | **xpos** **ypos**                                 | Go to the position defined by `xpos` for X axis and `ypos` for Y axis*   | :green_heart:  |
 | `repeat` | **nb** **[** _expression_ **]**                   | Execute `nb` times the expression between brackets `[ ... ]`             | :green_heart:  |
 | `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :green_heart:  |
-| `print`  | **value**                                         | Print a `value` in the compilation console                               | :green_heart: |
+| `print`  | **value**                                         | Print a `value` in the compilation console                               | :green_heart:  |
 | `if`     | **:**_condition_ **[** _expression_ **]**         | Execute the expression between brackets `[ ... ]` if `condition` is true | :broken_heart: |
 | `to`     | **name** **:**_parameters_ __expression__ **end** | Create a callable procedure named `name` with parameters                 | :broken_heart: |
 
@@ -66,6 +66,7 @@ Here you can find all the supported LOGO lang features by this parser.
 | Feature    | Description                                                   |  Available ?   |
 | :--------- | :------------------------------------------------------------ | :------------: |
 | Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart:  |
+| Arithmetic | Support parenthesis                                           | :broken_heart: |
 | Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
 | Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
 
@@ -76,12 +77,6 @@ Here you can find all the supported LOGO lang features by this parser.
 
 ### expression
 ![expression](doc/expression.png)
-
-### distance
-![distance](doc/distance.png)
-
-### angle
-![angle](doc/angle.png)
 
 ### value
 ![value](doc/value.png)

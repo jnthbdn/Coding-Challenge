@@ -1,10 +1,6 @@
 language ::= (expression ('\r\n'|'\n')? )+
 
-expression ::= 'fd' distance| 'bk' distance | 'rt' angle | 'lt' angle | 'cs' | 'pu' | 'pd' | 'ht' | 'st' | 'home' | 'label' (word | string) | 'setxy' number number | 'repeat' integer '[' expression ']' | 'make' word value | 'print' value
-
-distance ::= number
-
-angle ::= number
+expression ::= 'fd' numeric_value| 'bk' numeric_value | 'rt' numeric_value | 'lt' numeric_value | 'cs' | 'pu' | 'pd' | 'ht' | 'st' | 'home' | 'label' value | 'setxy' numeric_value numeric_value | 'repeat' numeric_value '[' expression ']' | 'make' word value | 'print' value
 
 value ::= word | string | text_variable | numeric_value
 
