@@ -10,6 +10,7 @@ function setup() {
 
     codeInput.input(GoTurtleGo);
     GoTurtleGo();
+    noLoop();
 }
 
 function draw() { }
@@ -36,17 +37,9 @@ function GoTurtleGo() {
     pop();
 }
 
-function validateToken(value, varName, cmdName) {
+function validateTokenAndParseFloat(value, varName, cmdName) {
     if (value instanceof TokenReaderError && value.error == TokenReaderError.SEPARATOR_NOT_FOUND) {
         compileOutput.error(`Missing '${varName}' argument for ${cmdName}`);
-        return null;
-    }
-
-    return value;
-}
-
-function validateTokenAndParseFloat(value, varName, cmdName) {
-    if (validateToken(value, varName, cmdName) === null) {
         return null;
     }
 
@@ -63,10 +56,10 @@ function validateTokenAndParseInt(value, varName, cmdName) {
 
     let result = validateTokenAndParseFloat(value, varName, cmdName);
 
-    if( result == null ){
+    if (result == null) {
         return null;
     }
-    else{
+    else {
         return Math.floor(result);
     }
 }
@@ -98,15 +91,15 @@ function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt) {
     return value;
 }
 
-function isCharNumber(c){
+function isCharNumber(c) {
     return ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c);
 }
 
-function degToRad(d){
+function degToRad(d) {
     return d * (Math.PI / 180);
 }
 
-function radToDeg(r){
+function radToDeg(r) {
     return r / (Math.PI / 180);
 }
 
@@ -120,38 +113,46 @@ function parseExpression(code, turtle, globalVariables) {
 
         switch (cmd) {
             case "fd": {
-                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "fd");
+                let arg = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (arg !== null)
+                if (arg != null)
                     turtle.moveForward(arg);
+                else
+                    compileOutput.error("Missing argument for fd.");
 
                 break;
             }
 
             case "bk": {
-                let arg = validateTokenAndParseFloat(token.nextToken(), "distance", "bk");
+                let arg = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
 
 
-                if (arg !== null)
+                if (arg != null)
                     turtle.moveBackward(arg);
+                else
+                    compileOutput.error("Missing argument for bk.");
 
                 break;
             }
 
             case "rt": {
-                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "rt");
+                let arg = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (arg !== null)
+                if (arg != null)
                     turtle.turnRight(arg);
+                else
+                    compileOutput.error("Missing argument for rt.");
 
                 break;
             }
 
             case "lt": {
-                let arg = validateTokenAndParseFloat(token.nextToken(), "angle", "lt");
+                let arg = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (arg !== null)
+                if (arg != null)
                     turtle.turnLeft(arg);
+                else
+                    compileOutput.error("Missing argument for lt.");
 
                 break;
             }
@@ -181,45 +182,52 @@ function parseExpression(code, turtle, globalVariables) {
                 break;
 
             case "label": {
-                //let arg = validateBetweenToken(token.nextTokenBetween('"'), "label", '"');
-                let arg = validateToken(token.seekNextToken(), "word or string", 'label');
+                let arg = parseValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (arg === null)
-                    break;
-
-                arg = parseValue(token, globalVariables.concatAndClone(localVariables));
-
-                if (arg !== null)
+                if (arg != null)
                     turtle.write(arg);
+                else
+                    compileOutput.error("Missing argument for label.");
 
                 break;
             }
 
             case "setxy": {
-                let argX = validateTokenAndParseFloat(token.nextToken(), "posX", "setxy");
-                let argY = validateTokenAndParseFloat(token.nextToken(), "posY", "setxy");
+                let argX = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
+                let argY = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (argX !== null && argY !== null)
-                    turtle.goTo(argX, argY);
+                if (argX == null) {
+                    compileOutput.error("Missing argument 'posX' for setxy.");
+                }
+                else if( argY == null ) {
+                    compileOutput.error("Missing argument 'posY' for setxy.");
+                }
+                else{
+                    turtle.goTo(argx, argY);
+                }
 
                 break;
             }
 
             case "repeat": {
-                let argNb = validateTokenAndParseFloat(token.nextToken(), "nb", "repeat");
-
+                let argNb = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
                 let expr = validateBetweenToken(token.nextTokenBetween('[', ']'), "repeat", '[', ']')
 
-                if (argNb === null || expr === null) {
+                if (argNb == null) {
+                    compileOutput.error("Missing argument 'nb' for repeat.");
                     break;
                 }
 
-                if (expr.trim() === "") {
+                if (expr == null) {
+                    break;
+                }
+
+                if (expr.trim() == "") {
                     compileOutput.warning("Expression is empty for repeat. I will ignore this.");
                     break;
                 }
 
-                for (let i = 0; i < argNb; ++i) {
+                for (let i = 0; i < argNb && !compileOutput.isErrorLogged(); ++i) {
                     parseExpression(expr, turtle, globalVariables.concatAndClone(localVariables));
                 }
 
@@ -228,9 +236,8 @@ function parseExpression(code, turtle, globalVariables) {
 
             case "make": {
                 let argName = validateBetweenToken(token.nextTokenBetween('"', ' '), "make", '"', ' ');
-                //let argValue = validateToken(token.seekNextToken(), "value", "make");
 
-                if (argName === null) {
+                if (argName == null) {
                     break;
                 }
 
@@ -247,14 +254,12 @@ function parseExpression(code, turtle, globalVariables) {
 
                 let argValue = parseValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (argValue !== null) {
+                if (argValue != null) {
                     localVariables.add(argName, argValue);
                 }
-                else{
+                else {
                     compileOutput.error(`Missing 'value' argument type for make`);
                 }
-
-                console.table(localVariables.dict);
 
                 break;
             }
@@ -262,10 +267,10 @@ function parseExpression(code, turtle, globalVariables) {
             case "print": {
                 let argValue = parseValue(token, globalVariables.concatAndClone(localVariables));
 
-                if (argValue !== null) {
+                if (argValue != null) {
                     compileOutput.info(argValue);
                 }
-                else{
+                else {
                     compileOutput.error(`Missing 'value' argument type for print`);
                 }
                 break;
@@ -350,48 +355,48 @@ function parseNumericValue(token, localVariables) {
             }
         }
         // Aithmetic operator
-        else if( ['+', '-', '*', '/'].includes(seek) ){
+        else if (['+', '-', '*', '/'].includes(seek)) {
             let operator = token.nextCharacter();
-            
-            if( isLastTokenOperator ){
+
+            if (isLastTokenOperator) {
                 compileOutput.error(`An operator cannot follow another operator`);
                 return null;
             }
-            else{
+            else {
                 isLastTokenOperator = true;
             }
 
-            switch(operator){
+            switch (operator) {
                 case '+':
                     arithParser.addOp();
                     break;
-                    
+
                 case '-':
                     arithParser.substactOp();
                     break;
-                    
+
                 case '*':
                     arithParser.multOp();
                     break;
-                    
+
                 case '/':
                     arithParser.divideOp();
                     break;
             }
         }
         // Number
-        else if( isCharNumber(seek) ){
+        else if (isCharNumber(seek)) {
             let isPoint = false;
             let num = token.nextCharacter();
 
             let c = token.seekNextCharacter();
-            while( c != null && ( isCharNumber(c) || c == '.')){
-                if( c === '.' ){
-                    if( isPoint ){
+            while (c != null && (isCharNumber(c) || c == '.')) {
+                if (c === '.') {
+                    if (isPoint) {
                         compileOutput.error(`A numeric value can't have more than 1 decimal sign (.).`);
                         return null;
                     }
-                    else{
+                    else {
                         isPoint = true;
                     }
                 }
@@ -404,125 +409,125 @@ function parseNumericValue(token, localVariables) {
             isLastTokenOperator = false;
         }
         // Math function
-        else if( ['r', 'c', 's', 't', 'a', 'l', 'p'].includes(seek) ){
+        else if (['r', 'c', 's', 't', 'a', 'l', 'p'].includes(seek)) {
             let fct = token.seekNextToken();
 
-            switch( fct ){
-                case "random":{
+            switch (fct) {
+                case "random": {
                     token.nextToken();
                     let maxArg = validateTokenAndParseInt(token.nextToken(), "max", "random");
 
-                    if( maxArg != null){
-                        arithParser.number( Math.floor( Math.random() * maxArg ) );
+                    if (maxArg != null) {
+                        arithParser.number(Math.floor(Math.random() * maxArg));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "cos":{
+                case "cos": {
                     token.nextToken();
                     let angleArg = validateTokenAndParseFloat(token.nextToken(), "angle", "cos");
 
-                    if( angleArg != null){
-                        arithParser.number( Math.cos( degToRad(angleArg) ) );
+                    if (angleArg != null) {
+                        arithParser.number(Math.cos(degToRad(angleArg)));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "sin":{
+                case "sin": {
                     token.nextToken();
                     let angleArg = validateTokenAndParseFloat(token.nextToken(), "angle", "sin");
 
-                    if( angleArg != null){
-                        arithParser.number( Math.sin( degToRad(angleArg) ) );
+                    if (angleArg != null) {
+                        arithParser.number(Math.sin(degToRad(angleArg)));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "tan":{
+                case "tan": {
                     token.nextToken();
                     let angleArg = validateTokenAndParseFloat(token.nextToken(), "angle", "tan");
 
-                    if( angleArg != null){
-                        arithParser.number( Math.tan( degToRad(angleArg) ) );
+                    if (angleArg != null) {
+                        arithParser.number(Math.tan(degToRad(angleArg)));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "arccos":{
+                case "arccos": {
                     token.nextToken();
                     let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "arccos");
 
-                    if( valueArg != null){
-                        arithParser.number( radToDeg( Math.acos( valueArg) ) );
+                    if (valueArg != null) {
+                        arithParser.number(radToDeg(Math.acos(valueArg)));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "arcsin":{
+                case "arcsin": {
                     token.nextToken();
                     let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "arcsin");
 
-                    if( valueArg != null){
-                        arithParser.number( radToDeg( Math.asin( valueArg) ) );
+                    if (valueArg != null) {
+                        arithParser.number(radToDeg(Math.asin(valueArg)));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "arctan":{
+                case "arctan": {
                     token.nextToken();
                     let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "arctan");
 
-                    if( valueArg != null){
-                        arithParser.number( radToDeg( Math.atan( valueArg) ) );
+                    if (valueArg != null) {
+                        arithParser.number(radToDeg(Math.atan(valueArg)));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "sqrt":{
+                case "sqrt": {
                     token.nextToken();
                     let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "sqrt");
 
-                    if( valueArg != null){
-                        arithParser.number( Math.sqrt(valueArg) );
+                    if (valueArg != null) {
+                        arithParser.number(Math.sqrt(valueArg));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "ln":{
+                case "ln": {
                     token.nextToken();
                     let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "ln");
 
-                    if( valueArg != null){
-                        arithParser.number( Math.log(valueArg) );
+                    if (valueArg != null) {
+                        arithParser.number(Math.log(valueArg));
                     }
 
                     isLastTokenOperator = false;
                     break;
                 }
 
-                case "power":{
+                case "power": {
                     token.nextToken();
                     let valueArg = validateTokenAndParseFloat(token.nextToken(), "value", "power");
                     let powerArg = validateTokenAndParseFloat(token.nextToken(), "p", "power");
 
-                    if( valueArg != null && powerArg != null){
-                        arithParser.number( Math.pow(valueArg, powerArg) );
+                    if (valueArg != null && powerArg != null) {
+                        arithParser.number(Math.pow(valueArg, powerArg));
                     }
 
                     isLastTokenOperator = false;
@@ -535,14 +540,13 @@ function parseNumericValue(token, localVariables) {
             }
         }
         // Stop parsing
-        else{
-            console.log("Stop parsing value")
+        else {
             isParsing = false;
         }
 
     }
 
-    if( isLastTokenOperator ){
+    if (isLastTokenOperator) {
         compileOutput.error(`An arithmetic expression cannot finish with an operator.`);
         return null;
     }
