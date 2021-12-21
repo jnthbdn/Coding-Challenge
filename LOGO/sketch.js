@@ -92,7 +92,8 @@ function validateBetweenToken(value, cmdName, openTxt, closeTxt = openTxt) {
 }
 
 function isCharNumber(c) {
-    return ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c);
+    var charCode = c?.charCodeAt(0);
+    return charCode >= 48 && charCode <= 57;
 }
 
 function degToRad(d) {
