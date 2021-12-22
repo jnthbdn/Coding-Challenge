@@ -39,7 +39,6 @@ Here you can find all the supported LOGO lang features by this parser.
 | `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :green_heart:  |
 | `print`  | **value**                                         | Print a `value` in the compilation console                               | :green_heart:  |
 | `if`     | **:**_condition_ **[** _expression_ **]**         | Execute the expression between brackets `[ ... ]` if `condition` is true | :broken_heart: |
-| `to`     | **name** **:**_parameters_ __expression__ **end** | Create a callable procedure named `name` with parameters                 | :broken_heart: |
 
 
 \* The (0, 0) point is the home position (it should be the center of the screen), the rotation will be the same. 
@@ -66,7 +65,7 @@ Here you can find all the supported LOGO lang features by this parser.
 | Feature    | Description                                                   |  Available ?   |
 | :--------- | :------------------------------------------------------------ | :------------: |
 | Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart:  |
-| Arithmetic | Support parenthesis                                           | :green_heart: |
+| Arithmetic | Support parenthesis                                           | :green_heart:  |
 | Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
 | Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
 
