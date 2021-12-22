@@ -10,20 +10,28 @@ class ArithmeticParser {
         this.inputs.push( new ArithmeticNumber(num) );
     }
 
+    openParenthesis(){
+        this.inputs.push( new ArithmeticParenthesis(false) );
+    }
+
+    closeParenthesis(){
+        this.inputs.push( new ArithmeticParenthesis(true) );
+    }
+
     addOp(){
-        this.inputs.push( new ArithmeticOperator("+", (a, b) => {return a+b;}, 1))
+        this.inputs.push( new ArithmeticOperator("+", 2, (a, b) => {return a+b;}));
     }
 
     substactOp(){
-        this.inputs.push( new ArithmeticOperator("-", (a, b) => {return a-b;}, 1))
+        this.inputs.push( new ArithmeticOperator("-", 2, (a, b) => {return a-b;}));
     }
 
     multOp(){
-        this.inputs.push( new ArithmeticOperator("*", (a, b) => {return a*b;}, 2))
+        this.inputs.push( new ArithmeticOperator("*", 3, (a, b) => {return a*b;}));
     }
 
     divideOp(){
-        this.inputs.push( new ArithmeticOperator("/", (a, b) => {return a/b;}, 2))
+        this.inputs.push( new ArithmeticOperator("/", 3, (a, b) => {return a/b;}));
     }
 
     showInput(){
@@ -63,7 +71,7 @@ class ArithmeticParser {
         let stack = [];
 
         this.rpn.forEach( (elem) => {
-            if( elem.isOperator ){
+            if( elem instanceof ArithmeticOperator ){
 
                 if( stack.length < 2 ){
                     this.compileOuput.error("Arithmetic Parser Error : Not enough stack elements!");
@@ -74,8 +82,8 @@ class ArithmeticParser {
                 let a = stack.pop();
                 stack.push( elem.eval_fct(a, b) );
             }
-            else{
-                stack.push(elem.eval_fct());
+            else if( elem instanceof ArithmeticNumber ){
+                stack.push(elem.value);
             }
         } );
 
@@ -89,7 +97,7 @@ class ArithmeticParser {
 
         this.inputs.forEach( (elem) => {
 
-            if( elem.isOperator ){
+            if( elem instanceof ArithmeticOperator ){
                 if( operatorStack.length > 0 && operatorStack[operatorStack.length-1].priority > elem.priority ){
                     while( operatorStack.length > 0){
                         this.rpn.push( operatorStack.pop() )
@@ -98,7 +106,19 @@ class ArithmeticParser {
                 
                 operatorStack.push(elem);
             }
-            else{
+            else if( elem instanceof ArithmeticParenthesis ){
+                if( elem.isClosing ){
+                    while( operatorStack[operatorStack.length - 1].symbol != ArithmeticParenthesis.SYMBOL_OPEN ){
+                        this.rpn.push( operatorStack.pop() );
+                    }
+
+                    operatorStack.pop();    // Remove open parenthesis from operator stack
+                }
+                else{
+                    operatorStack.push(elem);
+                }
+            }
+            else {
                 this.rpn.push(elem);
             }
 
@@ -112,22 +132,39 @@ class ArithmeticParser {
 }
 
 class ArithmeticElement {
-    constructor(symbol, isOperator, eval_fct, priority){
+    constructor(symbol, priority){
         this.symbol = symbol;
-        this.isOperator = isOperator;
-        this.eval_fct = eval_fct
-        this.priority = priority;
     }
 }
 
 class ArithmeticNumber extends ArithmeticElement {
     constructor(value){
-        super(value, false, () => { return value }, -1);
+        super(value);
+        this.value = parseFloat(value);
     }
 }
 
 class ArithmeticOperator extends ArithmeticElement {
-    constructor(symbol, eval_fct, priority){
-        super(symbol, true, eval_fct, priority);
+    constructor(symbol, priority, eval_fct){
+        super(symbol, priority);
+        this.eval_fct = eval_fct;
+        this.priority = priority;
+    }
+}
+
+class ArithmeticParenthesis extends ArithmeticElement {
+
+    static SYMBOL_OPEN = "(";
+    static SYMBOL_CLOSE = ")";
+
+    constructor(isClosing){
+        if( isClosing ){
+            super(ArithmeticParenthesis.SYMBOL_CLOSE);
+        }
+        else{
+            super(ArithmeticParenthesis.SYMBOL_OPEN);
+        }
+
+        this.isClosing = isClosing;
     }
 }

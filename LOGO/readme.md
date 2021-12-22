@@ -66,7 +66,7 @@ Here you can find all the supported LOGO lang features by this parser.
 | Feature    | Description                                                   |  Available ?   |
 | :--------- | :------------------------------------------------------------ | :------------: |
 | Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart:  |
-| Arithmetic | Support parenthesis                                           | :broken_heart: |
+| Arithmetic | Support parenthesis                                           | :green_heart: |
 | Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
 | Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
 

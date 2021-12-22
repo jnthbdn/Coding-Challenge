@@ -4,7 +4,7 @@ expression ::= 'fd' numeric_value| 'bk' numeric_value | 'rt' numeric_value | 'lt
 
 value ::= word | string | text_variable | numeric_value
 
-numeric_value ::= (number | math_function | numeric_variable ) ( operator (number | math_function | numeric_variable))*
+numeric_value ::=  '('? (number | math_function | numeric_variable ) ')'? ( operator '('? (number | math_function | numeric_variable ) ')'?)*
 
 text_variable ::= ':' word
 

@@ -328,6 +328,8 @@ function parseNumericValue(token, localVariables) {
     let isLastTokenOperator = false;
     let isParsing = true;
     let arithParser = new ArithmeticParser(compileOutput);
+    let openParentheses = 0;
+    let closeParentheses = 0;
 
     while (isParsing) {
 
@@ -336,6 +338,29 @@ function parseNumericValue(token, localVariables) {
         // Ignore space
         if (seek == ' ') {
             token.nextCharacter();
+        }
+        // Parenthesis
+        else if (seek == '(' || seek == ')') {
+
+            if( token.nextCharacter() == '(' ){
+                arithParser.openParenthesis();
+                openParentheses++;
+            }
+            else{
+                if( openParentheses == closeParentheses ){
+                    compileOutput.error(`Too many closing parentheses.`);
+                    return null;
+                }
+
+                if( isLastTokenOperator ){
+                    compileOutput.error(`Closing parenthesis cannot follow an operator.`);
+                    return null;
+                }
+
+                closeParentheses++;
+                arithParser.closeParenthesis();
+            }
+
         }
         // Numeric variable
         else if (seek == ':') {
@@ -549,6 +574,11 @@ function parseNumericValue(token, localVariables) {
 
     if (isLastTokenOperator) {
         compileOutput.error(`An arithmetic expression cannot finish with an operator.`);
+        return null;
+    }
+
+    if (openParentheses != closeParentheses) {
+        compileOutput.error(`Missing closing parenthesis.`);
         return null;
     }
 
