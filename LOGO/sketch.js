@@ -122,6 +122,10 @@ function parseExpression(code, turtle, globalVariables) {
     while (!token.isParseFinish() && !compileOutput.isErrorLogged()) {
         let cmd = token.nextToken()?.trim().toLowerCase();
 
+        if( cmd.length == 0){
+            continue;
+        }
+
         switch (cmd) {
             case "fd": {
                 let arg = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
@@ -350,6 +354,7 @@ function parseExpression(code, turtle, globalVariables) {
 
             default:
                 compileOutput.warning(`Unknown command '${cmd}'. I will ignore it...`);
+                break;
         }
     }
 }
