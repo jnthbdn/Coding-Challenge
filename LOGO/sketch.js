@@ -1,12 +1,16 @@
 let codeInput;
 let compileOutput;
 
+let divParent = document.getElementById("right_panel");
+let maxWidth = divParent.clientWidth - 8 * 2;
+let maxHeight = divParent.clientHeight - 8 * 2;
+
 function setup() {
-    createCanvas(600, 600);
+    let cnv = createCanvas(maxWidth, maxHeight);
     angleMode(DEGREES);
 
     codeInput = select("#code");
-    compileOutput = new CompileOutput(select("#error"));
+    compileOutput = new CompileOutput(select("#compilation_output"));
 
     codeInput.input(GoTurtleGo);
     GoTurtleGo();

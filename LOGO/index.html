@@ -1,21 +1,71 @@
 <html>
   <head>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
+
+    <style>
+      .base_panel{
+        box-sizing: border-box;
+        width: 50vw;
+        height: 100vh;
+        position: absolute;
+
+        padding: 8px;
+        background-color: #fbf5ff;
+      }
+
+      #left_panel {
+        top: 0;
+        left: 0;
+        overflow: hidden;
+      }
+
+      #right_panel {
+        top: 0;
+        left: 50%;
+      }
+      
+      #code {
+        margin-bottom: 1em;
+        width: 100%;
+        height: 50%;
+        border-radius: 5px;
+      }
+
+      #compilation_output {
+        border-radius: 5px;
+        border: 1px solid black;
+        width: calc( 100% - 1em);
+        height: calc( 50% - 2em);
+        
+        padding-left: 1em;
+        overflow: auto;
+      }
+
+      #defaultCanvas0{
+        border-radius: 5px;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div id="left_panel" class="base_panel">
+      <textarea id="code">fd 60 rt 120 fd 60 rt 120 fd 60 rt 120</textarea>
+      <div>
+          Compilation Output : 
+          <div id="compilation_output">Ready !</div>
+      </div>
+    </div>
+    <div id="right_panel" class="base_panel">
+      <main>
+      </main>
+    </div>
+
+
     <script src="compileOuput.js"></script>
     <script src="ArithmeticParser.js"></script>
     <script src="variableManager.js"></script>
     <script src="tokenReader.js"></script>
     <script src="turtle.js"></script>
     <script src="sketch.js"></script>
-  </head>
-  <body>
-    <textarea id="code" rows="6" cols="80" style="margin-bottom: 1em;">fd 60 rt 120 fd 60 rt 120 fd 60 rt 120</textarea>
-    <div>
-        Compilation Output : 
-        <div id="error" style="padding-left: 1em; margin-bottom: 1em;">Ready !</div>
-    </div>
-    <br/>
-    <main>
-    </main>
   </body>
 </html>
