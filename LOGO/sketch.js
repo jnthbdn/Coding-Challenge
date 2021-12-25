@@ -37,13 +37,23 @@ function GoTurtleGo() {
     pop();
 }
 
-function validateTokenAndParseFloat(value, varName, cmdName) {
+function validateToken(value, varName, cmdName){
     if (value instanceof TokenReaderError && value.error == TokenReaderError.SEPARATOR_NOT_FOUND) {
         compileOutput.error(`Missing '${varName}' argument for ${cmdName}`);
         return null;
     }
 
-    let result = parseFloat(value);
+    return value;
+}
+
+function validateTokenAndParseFloat(value, varName, cmdName) {
+    let result = validateToken(value, varName, cmdName);
+
+    if( result == null ){
+        return null;
+    }
+
+    result = parseFloat(value);
     if (isNaN(result)) {
         compileOutput.error(`Bad '${varName}' argument type for ${cmdName}`);
         return null;
@@ -229,6 +239,67 @@ function parseExpression(code, turtle, globalVariables) {
                 }
 
                 for (let i = 0; i < argNb && !compileOutput.isErrorLogged(); ++i) {
+                    parseExpression(expr, turtle, globalVariables.concatAndClone(localVariables));
+                }
+
+                break;
+            }
+
+            case "if": {
+
+                let argLeft = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
+                let argOperator = validateToken( token.nextToken(), "operator", "if" );
+                let argRight = parseNumericValue(token, globalVariables.concatAndClone(localVariables));
+                let expr = validateBetweenToken(token.nextTokenBetween('[', ']'), "if", '[', ']');
+                var isTrue = false;
+
+
+                if (argLeft == null) {
+                    compileOutput.error("Missing argument 'lValue' for if.");
+                    break;
+                }
+
+                if (argRight == null) {
+                    compileOutput.error("Missing argument 'rValue' for if.");
+                    break;
+                }
+
+                if (argOperator == null || expr == null) {
+                    break;
+                }
+
+                switch(argOperator){
+
+                    case "<":
+                        isTrue = argLeft < argRight;
+                        break;
+
+                    case "<=":
+                        isTrue = argLeft <= argRight;
+                        break;
+
+                    case ">":
+                        isTrue = argLeft > argRight;
+                        break;
+
+                    case ">=":
+                        isTrue = argLeft >= argRight;
+                        break;
+
+                    case "==":
+                        isTrue = argLeft == argRight;
+                        break;
+
+                    case "!=":
+                        isTrue = argLeft != argRight;
+                        break;
+
+                    default:
+                        compileOutput.error("Unknown boolean operator for if.");
+                        break;
+                }
+
+                if( isTrue ){
                     parseExpression(expr, turtle, globalVariables.concatAndClone(localVariables));
                 }
 

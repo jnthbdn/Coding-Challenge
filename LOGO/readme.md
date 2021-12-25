@@ -21,24 +21,25 @@ Download the repo. files and simply run your http server in the same folder.
 Here you can find all the supported LOGO lang features by this parser.
 
 ### :turtle: Commands
-| Command  | Arguments                                         | Description                                                              |  Available ?   |
-| :------- | :------------------------------------------------ | :----------------------------------------------------------------------- | :------------: |
-| `fd`     | **distance**                                      | Move the turtle foward by `distance` pixel                               | :green_heart:  |
-| `bk`     | **distance**                                      | Move the turtle backward by `distance` pixel                             | :green_heart:  |
-| `rt`     | **angle**                                         | Turn the turtle to the right by `angle` degrees                          | :green_heart:  |
-| `lt`     | **angle**                                         | Turn the turtle to the left by `angle` degrees                           | :green_heart:  |
-| `cs`     |                                                   | Clear the screen                                                         | :green_heart:  |
-| `pu`     |                                                   | Hold the pen up (no drawing)                                             | :green_heart:  |
-| `pd`     |                                                   | Hold the pen down (drawing)                                              | :green_heart:  |
-| `ht`     |                                                   | Not showing the turtle                                                   | :green_heart:  |
-| `st`     |                                                   | Show the turtle                                                          | :green_heart:  |
-| `home`   |                                                   | Go back to the start position (and rotation)                             | :green_heart:  |
-| `label`  | **"** _word_  \|  **[** _string_ **]**            | Write the text between double quote `"..."` at the turtle position       | :green_heart:  |
-| `setxy`  | **xpos** **ypos**                                 | Go to the position defined by `xpos` for X axis and `ypos` for Y axis*   | :green_heart:  |
-| `repeat` | **nb** **[** _expression_ **]**                   | Execute `nb` times the expression between brackets `[ ... ]`             | :green_heart:  |
-| `make`   | **"**__name__ **value**                           | Create variable (named `name`) with the value `value`                    | :green_heart:  |
-| `print`  | **value**                                         | Print a `value` in the compilation console                               | :green_heart:  |
-| `if`     | **:**_condition_ **[** _expression_ **]**         | Execute the expression between brackets `[ ... ]` if `condition` is true | :broken_heart: |
+| Command  | Arguments                                                   | Description                                                                |  Available ?   |
+| :------- | :---------------------------------------------------------- | :------------------------------------------------------------------------- | :------------: |
+| `fd`     | **distance**                                                | Move the turtle foward by `distance` pixel                                 | :green_heart:  |
+| `bk`     | **distance**                                                | Move the turtle backward by `distance` pixel                               | :green_heart:  |
+| `rt`     | **angle**                                                   | Turn the turtle to the right by `angle` degrees                            | :green_heart:  |
+| `lt`     | **angle**                                                   | Turn the turtle to the left by `angle` degrees                             | :green_heart:  |
+| `cs`     |                                                             | Clear the screen                                                           | :green_heart:  |
+| `pu`     |                                                             | Hold the pen up (no drawing)                                               | :green_heart:  |
+| `pd`     |                                                             | Hold the pen down (drawing)                                                | :green_heart:  |
+| `ht`     |                                                             | Not showing the turtle                                                     | :green_heart:  |
+| `st`     |                                                             | Show the turtle                                                            | :green_heart:  |
+| `home`   |                                                             | Go back to the start position (and rotation)                               | :green_heart:  |
+| `label`  | **value**                                                   | Write the text between double quote `"..."` at the turtle position         | :green_heart:  |
+| `setxy`  | **xpos** **ypos**                                           | Go to the position defined by `xpos` for X axis and `ypos` for Y axis*     | :green_heart:  |
+| `repeat` | **nb** **[** _expression_ **]**                             | Execute `nb` times the expression between brackets `[ ... ]`               | :green_heart:  |
+| `make`   | **"**__name__ **value**                                     | Create variable (named `name`) with the value `value`                      | :green_heart:  |
+| `print`  | **value**                                                   | Print a `value` in the compilation console                                 | :green_heart:  |
+| `if`     | **lValue** **operator** **rValue** **[** _expression_ **]** | Execute the expression between brackets `[ ... ]` if the condition is true | :green_heart:  |
+| `to`     | **name** **:**_parameters_ __expression__ **end**           | Create a callable procedure named `name` with parameters                   | :broken_heart: |
 
 
 \* The (0, 0) point is the home position (it should be the center of the screen), the rotation will be the same. 
@@ -62,12 +63,12 @@ Here you can find all the supported LOGO lang features by this parser.
 
 ### :turtle: Other
 
-| Feature    | Description                                                   |  Available ?   |
-| :--------- | :------------------------------------------------------------ | :------------: |
-| Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart:  |
-| Arithmetic | Support parenthesis                                           | :green_heart:  |
-| Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :broken_heart: |
-| Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart:  |
+| Feature    | Description                                                   |  Available ?  |
+| :--------- | :------------------------------------------------------------ | :-----------: |
+| Arithmetic | Support arithmetic operations (`+`, `-`, `/`, `*` )           | :green_heart: |
+| Arithmetic | Support parenthesis                                           | :green_heart: |
+| Boolean    | Support boolean operations (`>`, `<`, `>=`, `<=`, `==`, `!=`) | :green_heart: |
+| Comments   | Everything beetween `;` and the end of the line is not parsed | :green_heart: |
 
 
 ## Syntax Diagram
@@ -106,3 +107,6 @@ Here you can find all the supported LOGO lang features by this parser.
 
 ### string
 ![string](doc/string.png)
+
+### boolean_operator
+![string](doc/boolean_operator.png)
